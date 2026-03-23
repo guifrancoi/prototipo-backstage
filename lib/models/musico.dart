@@ -1,0 +1,47 @@
+class Musico {
+  final String id;
+  final String nomeArtistico;
+  final String generoMusical;
+  final String cidade;
+  final String descricao;
+  final double cacheMedio;
+  final List<String> portfolioLinks;
+  final List<String> datasDisponiveis;
+  final String? fotoPath;
+
+  Musico({
+    required this.id,
+    required this.nomeArtistico,
+    required this.generoMusical,
+    required this.cidade,
+    required this.descricao,
+    required this.cacheMedio,
+    required this.portfolioLinks,
+    required this.datasDisponiveis,
+    this.fotoPath,
+  });
+
+  Musico copyWith({
+    String? id,
+    String? nomeArtistico,
+    String? generoMusical,
+    String? cidade,
+    String? descricao,
+    double? cacheMedio,
+    List<String>? portfolioLinks,
+    List<String>? datasDisponiveis,
+    String? fotoPath,
+  }) {
+    return Musico(
+      id: id ?? this.id,
+      nomeArtistico: nomeArtistico ?? this.nomeArtistico,
+      generoMusical: generoMusical ?? this.generoMusical,
+      cidade: cidade ?? this.cidade,
+      descricao: descricao ?? this.descricao,
+      cacheMedio: cacheMedio ?? this.cacheMedio,
+      portfolioLinks: portfolioLinks ?? this.portfolioLinks,
+      datasDisponiveis: datasDisponiveis ?? this.datasDisponiveis,
+      fotoPath: fotoPath ?? this.fotoPath,
+    );
+  }
+}
