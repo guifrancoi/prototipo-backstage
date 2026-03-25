@@ -21,16 +21,23 @@ class SobreScreen extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             Text(
-              'Conectar músicos e casas de show de forma prática, centralizando portfólios, oportunidades, agendas e comunicação.',
+              'Nosso objetivo é criar uma plataforma que conecte músicos e casas de'
+              'show de forma eficiente, automatizando a busca e a seleção por meio de filtros e'
+              'recomendação inteligente. Busca-se oferecer um ambiente centralizado para divulgação de'
+              'portfólios, consulta de agendas, negociação via chat e identificação de oportunidades'
+              'compatíveis, reduzindo o tempo gasto em processos manuais e aumentando a probabilidade'
+              'de contratação para ambos os lados.'
+              'Além disso, o sistema pretende profissionalizar o relacionamento entre artistas e'
+              'estabelecimentos, entregando uma ferramenta acessível, prática e economicamente viável,'
+              'capaz de melhorar a organização, a visibilidade e a produtividade do setor musical independente.',
             ),
             SizedBox(height: 16),
             Text(
               'Equipe de desenvolvimento:',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            Text('• Integrante 1'),
-            Text('• Integrante 2'),
-            Text('• Integrante 3'),
+            Text('• Guilherme Francoi'),
+            Text('• Victor Vicentini'),
             SizedBox(height: 16),
             Text('Disciplina: Desenvolvimento Mobile'),
             Text('Instituição: Unaerp'),

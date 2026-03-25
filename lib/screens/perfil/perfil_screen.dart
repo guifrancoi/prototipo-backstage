@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/constants/app_strings.dart';
 import '../../models/musico.dart';
 import '../../providers/perfil_provider.dart';
 
@@ -18,7 +20,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final _nomeArtisticoController = TextEditingController();
-  final _generoController = TextEditingController();
   final _cidadeController = TextEditingController();
   final _cacheController = TextEditingController();
   final _descricaoController = TextEditingController();
@@ -27,6 +28,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
   bool _dadosCarregados = false;
   bool _modoEdicao = false;
   String? _fotoSelecionadaPath;
+  String? _generoSelecionado;
 
   @override
   void initState() {
@@ -48,16 +50,38 @@ class _PerfilScreenState extends State<PerfilScreen> {
 
   void _preencherCampos(Musico perfil) {
     _nomeArtisticoController.text = perfil.nomeArtistico;
-    _generoController.text = perfil.generoMusical;
     _cidadeController.text = perfil.cidade;
     _cacheController.text = perfil.cacheMedio.toStringAsFixed(2);
     _descricaoController.text = perfil.descricao;
     _portfolioController.text = perfil.portfolioLinks.join('\n');
     _fotoSelecionadaPath = perfil.fotoPath;
+    _generoSelecionado = perfil.generoMusical;
     _dadosCarregados = true;
   }
 
-  void _cancelarEdicao(Musico perfil) {
+  Future<void> _cancelarEdicaoComConfirmacao(Musico perfil) async {
+    final confirmar = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Cancelar edição'),
+        content: const Text(
+          'Deseja realmente cancelar? As alterações não salvas serão perdidas.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Não'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Sim'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmar != true) return;
+
     _preencherCampos(perfil);
 
     setState(() {
@@ -88,6 +112,30 @@ class _PerfilScreenState extends State<PerfilScreen> {
     );
   }
 
+  Future<void> _abrirLink(String link) async {
+    String url = link.trim();
+
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://$url';
+    }
+
+    final uri = Uri.tryParse(url);
+    if (uri == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Link inválido.')),
+      );
+      return;
+    }
+
+    final abriu = await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+    if (!abriu && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Não foi possível abrir o link.')),
+      );
+    }
+  }
+
   String? _validarCampoObrigatorio(String? value, String nomeCampo) {
     if (value == null || value.trim().isEmpty) {
       return 'Informe $nomeCampo.';
@@ -115,6 +163,13 @@ class _PerfilScreenState extends State<PerfilScreen> {
   void _salvarPerfil() {
     if (!_formKey.currentState!.validate()) return;
 
+    if (_generoSelecionado == null || _generoSelecionado!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Selecione um gênero musical.')),
+      );
+      return;
+    }
+
     final provider = context.read<PerfilProvider>();
 
     final portfolioLinks = _portfolioController.text
@@ -129,7 +184,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
 
     provider.atualizarPerfil(
       nomeArtistico: _nomeArtisticoController.text.trim(),
-      generoMusical: _generoController.text.trim(),
+      generoMusical: _generoSelecionado!,
       cidade: _cidadeController.text.trim(),
       cacheMedio: cache,
       descricao: _descricaoController.text.trim(),
@@ -151,7 +206,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
   @override
   void dispose() {
     _nomeArtisticoController.dispose();
-    _generoController.dispose();
     _cidadeController.dispose();
     _cacheController.dispose();
     _descricaoController.dispose();
@@ -228,8 +282,17 @@ class _PerfilScreenState extends State<PerfilScreen> {
                 else
                   ...perfil.portfolioLinks.map(
                     (link) => Padding(
-                      padding: const EdgeInsets.only(bottom: 6),
-                      child: Text(link),
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: InkWell(
+                        onTap: () => _abrirLink(link),
+                        child: Text(
+                          link,
+                          style: const TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
               ],
@@ -273,14 +336,27 @@ class _PerfilScreenState extends State<PerfilScreen> {
                   _validarCampoObrigatorio(value, 'o nome artístico'),
             ),
             const SizedBox(height: 16),
-            TextFormField(
-              controller: _generoController,
+            DropdownButtonFormField<String>(
+              value: _generoSelecionado,
               decoration: const InputDecoration(
                 labelText: 'Gênero musical',
                 border: OutlineInputBorder(),
               ),
+              items: AppStrings.generosMusicais
+                  .map(
+                    (genero) => DropdownMenuItem(
+                      value: genero,
+                      child: Text(genero),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  _generoSelecionado = value;
+                });
+              },
               validator: (value) =>
-                  _validarCampoObrigatorio(value, 'o gênero musical'),
+                  value == null || value.isEmpty ? 'Selecione um gênero musical.' : null,
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -335,7 +411,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () => _cancelarEdicao(perfil),
+                    onPressed: () => _cancelarEdicaoComConfirmacao(perfil),
                     child: const Text('Cancelar'),
                   ),
                 ),

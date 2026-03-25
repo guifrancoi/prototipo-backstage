@@ -13,6 +13,9 @@ class MusicoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
+        leading: const CircleAvatar(
+          child: Icon(Icons.music_note),
+        ),
         title: Text(musico.nomeArtistico),
         subtitle: Text('${musico.generoMusical} • ${musico.cidade}'),
         trailing: Text('R\$ ${musico.cacheMedio.toStringAsFixed(0)}'),
