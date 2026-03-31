@@ -43,10 +43,23 @@ class HomeScreen extends StatelessWidget {
             onTap: () => Navigator.pushNamed(context, AppRoutes.listaMusicos),
           ),
           _HomeTile(
+            title: 'Meus artistas de interesse',
+            icon: Icons.star,
+            onTap: () => Navigator.pushNamed(
+              context,
+              AppRoutes.meusArtistasInteresse,
+            ),
+          ),
+          _HomeTile(
             title: 'Lista de oportunidades',
             icon: Icons.event,
             onTap: () =>
                 Navigator.pushNamed(context, AppRoutes.listaOportunidades),
+          ),
+          _HomeTile(
+            title: 'Meus interesses',
+            icon: Icons.favorite,
+            onTap: () => Navigator.pushNamed(context, AppRoutes.meusInteresses),
           ),
           _HomeTile(
             title: 'Filtro de busca',

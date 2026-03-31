@@ -11,4 +11,6 @@ class AppRoutes {
   static const conversas = '/conversas';
   static const chat = '/chat';
   static const sobre = '/sobre';
+  static const meusInteresses = '/meus-interesses';
+  static const meusArtistasInteresse = '/meus-artistas-interesse';
 }

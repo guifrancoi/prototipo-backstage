@@ -14,6 +14,7 @@ class MockData {
       cacheMedio: 1200,
       portfolioLinks: ['instagram.com/bandaeclipse'],
       datasDisponiveis: ['2026-03-20', '2026-03-25'],
+      interesseEnviado: false,
     ),
     Musico(
       id: '2',
@@ -24,6 +25,7 @@ class MockData {
       cacheMedio: 800,
       portfolioLinks: ['youtube.com/duosol'],
       datasDisponiveis: ['2026-03-18', '2026-03-22'],
+      interesseEnviado: false,
     ),
   ];
 
@@ -37,6 +39,7 @@ class MockData {
       dataEvento: DateTime(2026, 3, 21),
       cacheOferecido: 900,
       contratante: 'Bar Central',
+      interesseEnviado: false,
     ),
     Oportunidade(
       id: '2',
@@ -47,6 +50,7 @@ class MockData {
       dataEvento: DateTime(2026, 3, 27),
       cacheOferecido: 1500,
       contratante: 'Pub Groove',
+      interesseEnviado: false,
     ),
   ];
 

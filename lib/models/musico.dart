@@ -8,6 +8,7 @@ class Musico {
   final List<String> portfolioLinks;
   final List<String> datasDisponiveis;
   final String? fotoPath;
+  final bool interesseEnviado;
 
   Musico({
     required this.id,
@@ -19,7 +20,8 @@ class Musico {
     required this.portfolioLinks,
     required this.datasDisponiveis,
     this.fotoPath,
-  });
+    bool? interesseEnviado,
+  }) : interesseEnviado = interesseEnviado ?? false;
 
   Musico copyWith({
     String? id,
@@ -31,6 +33,7 @@ class Musico {
     List<String>? portfolioLinks,
     List<String>? datasDisponiveis,
     String? fotoPath,
+    bool? interesseEnviado,
   }) {
     return Musico(
       id: id ?? this.id,
@@ -42,6 +45,7 @@ class Musico {
       portfolioLinks: portfolioLinks ?? this.portfolioLinks,
       datasDisponiveis: datasDisponiveis ?? this.datasDisponiveis,
       fotoPath: fotoPath ?? this.fotoPath,
+      interesseEnviado: interesseEnviado ?? this.interesseEnviado,
     );
   }
 }

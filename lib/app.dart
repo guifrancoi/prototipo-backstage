@@ -14,6 +14,8 @@ import 'screens/chat/conversas_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/perfil/perfil_screen.dart';
 import 'screens/sobre/sobre_screen.dart';
+import 'screens/busca/meus_interesses_screen.dart';
+import 'screens/busca/meus_artistas_interesse_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -37,6 +39,8 @@ class MyApp extends StatelessWidget {
         AppRoutes.agenda: (_) => const AgendaScreen(),
         AppRoutes.conversas: (_) => const ConversasScreen(),
         AppRoutes.sobre: (_) => const SobreScreen(),
+        AppRoutes.meusInteresses: (_) => const MeusInteressesScreen(),
+        AppRoutes.meusArtistasInteresse: (_) => const MeusArtistasInteresseScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == AppRoutes.chat) {
