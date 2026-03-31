@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:device_preview_plus/device_preview_plus.dart';
 
 import 'core/theme/app_theme.dart';
 import 'routes/app_routes.dart';
@@ -16,6 +17,8 @@ import 'screens/perfil/perfil_screen.dart';
 import 'screens/sobre/sobre_screen.dart';
 import 'screens/busca/meus_interesses_screen.dart';
 import 'screens/busca/meus_artistas_interesse_screen.dart';
+import 'screens/busca/detalhe_musico_screen.dart';
+import 'screens/busca/detalhe_oportunidade_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -26,6 +29,8 @@ class MyApp extends StatelessWidget {
       title: 'Backstage',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      locale: DevicePreview.locale(context),
+      builder: DevicePreview.appBuilder,
       initialRoute: AppRoutes.login,
       routes: {
         AppRoutes.login: (_) => const LoginScreen(),
@@ -49,6 +54,23 @@ class MyApp extends StatelessWidget {
             builder: (_) => ChatScreen(conversaId: conversaId),
           );
         }
+
+        if (settings.name == AppRoutes.detalheMusico) {
+          final musicoId = settings.arguments as String;
+          return MaterialPageRoute(
+            builder: (_) => DetalheMusicoScreen(musicoId: musicoId),
+          );
+        }
+
+        if (settings.name == AppRoutes.detalheOportunidade) {
+          final oportunidadeId = settings.arguments as String;
+          return MaterialPageRoute(
+            builder: (_) => DetalheOportunidadeScreen(
+              oportunidadeId: oportunidadeId,
+            ),
+          );
+        }
+        
         return null;
       },
     );

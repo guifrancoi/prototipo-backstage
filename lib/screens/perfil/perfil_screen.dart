@@ -337,7 +337,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _generoSelecionado,
+              initialValue: _generoSelecionado,
               decoration: const InputDecoration(
                 labelText: 'Gênero musical',
                 border: OutlineInputBorder(),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/oportunidade_provider.dart';
+import '../../routes/app_routes.dart';
 import '../../widgets/oportunidade_card.dart';
 
 class ListaOportunidadesScreen extends StatelessWidget {
@@ -74,6 +75,13 @@ class ListaOportunidadesScreen extends StatelessWidget {
                     context,
                     oportunidadeId: oportunidade.id,
                   ),
+                  onVerDetalhes: () {
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.detalheOportunidade,
+                      arguments: oportunidade.id,
+                    );
+                  },
                 );
               },
             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/oportunidade_provider.dart';
+import '../../routes/app_routes.dart';
 import '../../widgets/musico_card.dart';
 
 class ListaMusicosScreen extends StatelessWidget {
@@ -74,6 +75,13 @@ class ListaMusicosScreen extends StatelessWidget {
                     context,
                     musicoId: musico.id,
                   ),
+                  onVerDetalhes: () {
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.detalheMusico,
+                      arguments: musico.id,
+                    );
+                  },
                 );
               },
             ),

@@ -13,4 +13,6 @@ class AppRoutes {
   static const sobre = '/sobre';
   static const meusInteresses = '/meus-interesses';
   static const meusArtistasInteresse = '/meus-artistas-interesse';
+  static const detalheMusico = '/detalhe-musico';
+  static const detalheOportunidade = '/detalhe-oportunidade';
 }

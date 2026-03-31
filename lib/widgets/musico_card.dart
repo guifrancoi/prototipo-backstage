@@ -4,16 +4,18 @@ import '../models/musico.dart';
 class MusicoCard extends StatelessWidget {
   final Musico musico;
   final VoidCallback onDemonstrarInteresse;
+  final VoidCallback onVerDetalhes;
 
   const MusicoCard({
     super.key,
     required this.musico,
     required this.onDemonstrarInteresse,
+    required this.onVerDetalhes,
   });
 
   @override
   Widget build(BuildContext context) {
-    final interesseEnviado = musico.interesseEnviado;
+    final interesseEnviado = musico.interesseEnviado == true;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -32,33 +34,32 @@ class MusicoCard extends StatelessWidget {
               trailing: Text('R\$ ${musico.cacheMedio.toStringAsFixed(0)}'),
             ),
             const SizedBox(height: 8),
-            Text(musico.descricao),
-            const SizedBox(height: 12),
-            const Text(
-              'Portfólio:',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            Text(
+              musico.descricao,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 4),
-            if (musico.portfolioLinks.isEmpty)
-              const Text('Nenhum link cadastrado.')
-            else
-              ...musico.portfolioLinks.map(
-                (link) => Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Text(link),
-                ),
-              ),
             const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: interesseEnviado ? null : onDemonstrarInteresse,
-                child: Text(
-                  interesseEnviado
-                      ? 'Interesse enviado'
-                      : 'Demonstrar interesse',
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: onVerDetalhes,
+                    child: const Text('Ver detalhes'),
+                  ),
                 ),
-              ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: interesseEnviado ? null : onDemonstrarInteresse,
+                    child: Text(
+                      interesseEnviado
+                          ? 'Interesse enviado'
+                          : 'Interessar-se',
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

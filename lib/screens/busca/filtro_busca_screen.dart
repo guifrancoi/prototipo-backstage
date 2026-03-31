@@ -72,7 +72,7 @@ class _FiltroBuscaScreenState extends State<FiltroBuscaScreen> {
         child: Column(
           children: [
             DropdownButtonFormField<String>(
-              value: _generoSelecionado,
+              initialValue: _generoSelecionado,
               decoration: const InputDecoration(
                 labelText: 'Gênero musical',
                 border: OutlineInputBorder(),

@@ -4,11 +4,13 @@ import '../models/oportunidade.dart';
 class OportunidadeCard extends StatelessWidget {
   final Oportunidade oportunidade;
   final VoidCallback onDemonstrarInteresse;
+  final VoidCallback onVerDetalhes;
 
   const OportunidadeCard({
     super.key,
     required this.oportunidade,
     required this.onDemonstrarInteresse,
+    required this.onVerDetalhes,
   });
 
   String get dataFormatada {
@@ -20,6 +22,8 @@ class OportunidadeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final interesseEnviado = oportunidade.interesseEnviado == true;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
@@ -39,24 +43,34 @@ class OportunidadeCard extends StatelessWidget {
             Text('Cidade: ${oportunidade.cidade}'),
             Text('Gênero: ${oportunidade.generoMusical}'),
             Text('Data: $dataFormatada'),
-            Text(
-              'Cachê: R\$ ${oportunidade.cacheOferecido.toStringAsFixed(2)}',
-            ),
+            Text('Cachê: R\$ ${oportunidade.cacheOferecido.toStringAsFixed(2)}'),
             const SizedBox(height: 8),
-            Text(oportunidade.descricao),
+            Text(
+              oportunidade.descricao,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
             const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: oportunidade.interesseEnviado
-                    ? null
-                    : onDemonstrarInteresse,
-                child: Text(
-                  oportunidade.interesseEnviado
-                      ? 'Interesse enviado'
-                      : 'Demonstrar interesse',
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: onVerDetalhes,
+                    child: const Text('Ver detalhes'),
+                  ),
                 ),
-              ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: interesseEnviado ? null : onDemonstrarInteresse,
+                    child: Text(
+                      interesseEnviado
+                          ? 'Interesse enviado'
+                          : 'Interessar-se',
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

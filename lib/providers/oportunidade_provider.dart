@@ -201,4 +201,28 @@ class OportunidadeProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  Musico? buscarMusicoPorId(String id) {
+  try {
+    return _musicos.firstWhere((m) => m.id == id);
+  } catch (_) {
+    try {
+      return MockData.musicos.firstWhere((m) => m.id == id);
+    } catch (_) {
+      return null;
+    }
+  }
+}
+
+  Oportunidade? buscarOportunidadePorId(String id) {
+    try {
+      return _oportunidades.firstWhere((o) => o.id == id);
+    } catch (_) {
+      try {
+        return MockData.oportunidades.firstWhere((o) => o.id == id);
+      } catch (_) {
+        return null;
+      }
+    }
+  }
 }
