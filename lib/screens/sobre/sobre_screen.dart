@@ -37,6 +37,7 @@ class SobreScreen extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             Text('• Guilherme Francoi'),
+            Text('• Marco A. Lonardon Jr.'),
             Text('• Victor Vicentini'),
             SizedBox(height: 16),
             Text('Disciplina: Desenvolvimento Mobile'),
