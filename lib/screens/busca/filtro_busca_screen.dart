@@ -40,9 +40,7 @@ class _FiltroBuscaScreenState extends State<FiltroBuscaScreen> {
     );
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Filtro aplicado com sucesso.'),
-      ),
+      const SnackBar(content: Text('Filtro aplicado com sucesso.')),
     );
 
     Navigator.pushNamed(context, AppRoutes.listaMusicos);
@@ -58,9 +56,9 @@ class _FiltroBuscaScreenState extends State<FiltroBuscaScreen> {
       _cidadeController.clear();
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Filtros resetados.')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Filtros resetados.')));
   }
 
   @override
@@ -78,10 +76,7 @@ class _FiltroBuscaScreenState extends State<FiltroBuscaScreen> {
                 border: OutlineInputBorder(),
               ),
               items: [
-                const DropdownMenuItem<String>(
-                  value: '',
-                  child: Text('Todos'),
-                ),
+                const DropdownMenuItem<String>(value: '', child: Text('Todos')),
                 ...AppStrings.generosMusicais.map(
                   (genero) => DropdownMenuItem<String>(
                     value: genero,
@@ -91,7 +86,9 @@ class _FiltroBuscaScreenState extends State<FiltroBuscaScreen> {
               ],
               onChanged: (value) {
                 setState(() {
-                  _generoSelecionado = (value == null || value.isEmpty) ? null : value;
+                  _generoSelecionado = (value == null || value.isEmpty)
+                      ? null
+                      : value;
                 });
               },
             ),

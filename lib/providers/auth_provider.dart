@@ -1,34 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../services/firebase_data_service.dart';
 
 class AuthProvider extends ChangeNotifier {
+  AuthProvider({FirebaseDataService? service})
+    : _service = service ?? FirebaseDataService() {
+    if (_service.isEnabled && _service.currentUserId != null) {
+      _isLoggedIn = true;
+      _userEmail = _service.currentUserEmail;
+      _userId = _service.currentUserId;
+    }
+  }
+
+  final FirebaseDataService _service;
+
   bool _isLoading = false;
   bool _isLoggedIn = false;
+  String? _userId;
   String? _userEmail;
+  String? _errorMessage;
 
   bool get isLoading => _isLoading;
   bool get isLoggedIn => _isLoggedIn;
+  String? get userId => _userId;
   String? get userEmail => _userEmail;
+  String? get errorMessage => _errorMessage;
 
-  Future<bool> login({
-    required String email,
-    required String senha,
-  }) async {
+  Future<bool> login({required String email, required String senha}) async {
     _isLoading = true;
+    _errorMessage = null;
     notifyListeners();
 
-    await Future.delayed(const Duration(seconds: 1));
+    if (!_service.isEnabled) {
+      await Future.delayed(const Duration(seconds: 1));
 
-    _isLoading = false;
+      _isLoading = false;
 
-    if (email == 'teste@teste.com' && senha == '123456') {
-      _isLoggedIn = true;
-      _userEmail = email;
+      if (email == 'teste@teste.com' && senha == '123456') {
+        _isLoggedIn = true;
+        _userId = 'mock-user';
+        _userEmail = email;
+        notifyListeners();
+        return true;
+      }
+
+      _errorMessage = 'E-mail ou senha invalidos.';
       notifyListeners();
-      return true;
+      return false;
     }
 
-    notifyListeners();
-    return false;
+    try {
+      final credential = await _service.login(email: email, senha: senha);
+      _userId = credential.user?.uid;
+      _userEmail = credential.user?.email;
+      _isLoggedIn = true;
+      return true;
+    } on FirebaseAuthException catch (error) {
+      _errorMessage = _mensagemFirebaseAuth(error);
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<bool> cadastrar({
@@ -38,32 +72,88 @@ class AuthProvider extends ChangeNotifier {
     required String senha,
   }) async {
     _isLoading = true;
+    _errorMessage = null;
     notifyListeners();
 
-    await Future.delayed(const Duration(seconds: 1));
+    if (!_service.isEnabled) {
+      await Future.delayed(const Duration(seconds: 1));
 
-    _isLoading = false;
-    _isLoggedIn = true;
-    _userEmail = email;
-    notifyListeners();
+      _isLoading = false;
+      _isLoggedIn = true;
+      _userId = 'mock-user';
+      _userEmail = email;
+      notifyListeners();
 
-    return true;
+      return true;
+    }
+
+    try {
+      final credential = await _service.cadastrar(
+        nome: nome,
+        email: email,
+        telefone: telefone,
+        senha: senha,
+      );
+      _isLoggedIn = true;
+      _userId = credential.user?.uid;
+      _userEmail = credential.user?.email;
+      return true;
+    } on FirebaseAuthException catch (error) {
+      _errorMessage = _mensagemFirebaseAuth(error);
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<bool> recuperarSenha(String email) async {
     _isLoading = true;
+    _errorMessage = null;
     notifyListeners();
 
-    await Future.delayed(const Duration(seconds: 1));
+    if (!_service.isEnabled) {
+      await Future.delayed(const Duration(seconds: 1));
 
-    _isLoading = false;
-    notifyListeners();
-    return true;
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    }
+
+    try {
+      await _service.recuperarSenha(email);
+      return true;
+    } on FirebaseAuthException catch (error) {
+      _errorMessage = _mensagemFirebaseAuth(error);
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
-  void logout() {
+  Future<void> logout() async {
+    if (_service.isEnabled) {
+      await _service.logout();
+    }
+
     _isLoggedIn = false;
+    _userId = null;
     _userEmail = null;
+    _errorMessage = null;
     notifyListeners();
   }
+}
+
+String _mensagemFirebaseAuth(FirebaseAuthException error) {
+  return switch (error.code) {
+    'invalid-email' => 'E-mail invalido.',
+    'user-disabled' => 'Usuario desativado.',
+    'user-not-found' ||
+    'wrong-password' ||
+    'invalid-credential' => 'E-mail ou senha invalidos.',
+    'email-already-in-use' => 'Este e-mail ja esta cadastrado.',
+    'weak-password' => 'A senha deve ser mais forte.',
+    _ => 'Nao foi possivel concluir a autenticacao.',
+  };
 }

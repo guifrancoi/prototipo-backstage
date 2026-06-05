@@ -16,9 +16,7 @@ class ListaMusicosScreen extends StatelessWidget {
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('Demonstrar interesse'),
-        content: const Text(
-          'Deseja demonstrar interesse neste artista?',
-        ),
+        content: const Text('Deseja demonstrar interesse neste artista?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -34,10 +32,12 @@ class ListaMusicosScreen extends StatelessWidget {
 
     if (confirmar != true || !context.mounted) return;
 
-    context.read<OportunidadeProvider>().demonstrarInteresseEmMusico(
-          musicoId: musicoId,
-          usuarioId: 'casa_show_logada_1',
-        );
+    await context.read<OportunidadeProvider>().demonstrarInteresseEmMusico(
+      musicoId: musicoId,
+      usuarioId: 'casa_show_logada_1',
+    );
+
+    if (!context.mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -71,10 +71,8 @@ class ListaMusicosScreen extends StatelessWidget {
 
                 return MusicoCard(
                   musico: musico,
-                  onDemonstrarInteresse: () => _confirmarInteresse(
-                    context,
-                    musicoId: musico.id,
-                  ),
+                  onDemonstrarInteresse: () =>
+                      _confirmarInteresse(context, musicoId: musico.id),
                   onVerDetalhes: () {
                     Navigator.pushNamed(
                       context,

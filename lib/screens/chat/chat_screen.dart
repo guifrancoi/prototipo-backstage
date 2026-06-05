@@ -7,10 +7,7 @@ import '../../widgets/mensagem_bubble.dart';
 class ChatScreen extends StatefulWidget {
   final String conversaId;
 
-  const ChatScreen({
-    super.key,
-    required this.conversaId,
-  });
+  const ChatScreen({super.key, required this.conversaId});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -64,12 +61,14 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.send),
-                  onPressed: () {
+                  onPressed: () async {
                     final texto = _mensagemController.text.trim();
                     if (texto.isEmpty) return;
 
-                    provider.enviarMensagem(widget.conversaId, texto);
+                    await provider.enviarMensagem(widget.conversaId, texto);
                     _mensagemController.clear();
+
+                    if (!context.mounted) return;
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Mensagem enviada.')),

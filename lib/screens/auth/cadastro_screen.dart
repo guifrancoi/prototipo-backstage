@@ -36,14 +36,14 @@ class _CadastroScreenState extends State<CadastroScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     if (_senhaController.text != _confirmarSenhaController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('As senhas não coincidem.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('As senhas não coincidem.')));
       return;
     }
 
     final authProvider = context.read<AuthProvider>();
-    await authProvider.cadastrar(
+    final sucesso = await authProvider.cadastrar(
       nome: _nomeController.text.trim(),
       email: _emailController.text.trim(),
       telefone: _telefoneController.text.trim(),
@@ -51,6 +51,25 @@ class _CadastroScreenState extends State<CadastroScreen> {
     );
 
     if (!mounted) return;
+
+    if (!sucesso) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Erro'),
+          content: Text(
+            authProvider.errorMessage ?? 'Nao foi possivel criar a conta.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Cadastro realizado com sucesso!')),

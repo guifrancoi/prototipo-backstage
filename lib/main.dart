@@ -4,13 +4,17 @@ import 'package:provider/provider.dart';
 import 'package:device_preview_plus/device_preview_plus.dart';
 
 import 'app.dart';
+import 'core/firebase/firebase_bootstrap.dart';
 import 'providers/agenda_provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/chat_provider.dart';
 import 'providers/oportunidade_provider.dart';
 import 'providers/perfil_provider.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await FirebaseBootstrap.initialize();
+
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,

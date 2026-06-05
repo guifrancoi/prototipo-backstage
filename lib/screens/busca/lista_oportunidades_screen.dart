@@ -16,9 +16,7 @@ class ListaOportunidadesScreen extends StatelessWidget {
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('Demonstrar interesse'),
-        content: const Text(
-          'Deseja demonstrar interesse nesta oportunidade?',
-        ),
+        content: const Text('Deseja demonstrar interesse nesta oportunidade?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -34,15 +32,15 @@ class ListaOportunidadesScreen extends StatelessWidget {
 
     if (confirmar != true || !context.mounted) return;
 
-    context.read<OportunidadeProvider>().demonstrarInteresse(
-          oportunidadeId: oportunidadeId,
-          usuarioId: 'musico_logado_1',
-        );
+    await context.read<OportunidadeProvider>().demonstrarInteresse(
+      oportunidadeId: oportunidadeId,
+      usuarioId: 'musico_logado_1',
+    );
+
+    if (!context.mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Interesse enviado com sucesso!'),
-      ),
+      const SnackBar(content: Text('Interesse enviado com sucesso!')),
     );
   }
 

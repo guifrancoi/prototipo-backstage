@@ -6,10 +6,7 @@ import '../../providers/oportunidade_provider.dart';
 class DetalheOportunidadeScreen extends StatelessWidget {
   final String oportunidadeId;
 
-  const DetalheOportunidadeScreen({
-    super.key,
-    required this.oportunidadeId,
-  });
+  const DetalheOportunidadeScreen({super.key, required this.oportunidadeId});
 
   String _formatarData(DateTime data) {
     return '${data.day.toString().padLeft(2, '0')}/'
@@ -54,10 +51,12 @@ class DetalheOportunidadeScreen extends StatelessWidget {
 
     if (confirmar != true || !context.mounted) return;
 
-    provider.demonstrarInteresse(
+    await provider.demonstrarInteresse(
       oportunidadeId: oportunidadeId,
       usuarioId: 'musico_logado_1',
     );
+
+    if (!context.mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Interesse enviado com sucesso!')),
@@ -72,9 +71,7 @@ class DetalheOportunidadeScreen extends StatelessWidget {
     if (oportunidade == null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Detalhes da oportunidade')),
-        body: const Center(
-          child: Text('Oportunidade não encontrada.'),
-        ),
+        body: const Center(child: Text('Oportunidade não encontrada.')),
       );
     }
 
@@ -105,7 +102,9 @@ class DetalheOportunidadeScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text('Gênero musical: ${oportunidade.generoMusical}'),
                   const SizedBox(height: 8),
-                  Text('Data do evento: ${_formatarData(oportunidade.dataEvento)}'),
+                  Text(
+                    'Data do evento: ${_formatarData(oportunidade.dataEvento)}',
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     'Cachê oferecido: R\$ ${oportunidade.cacheOferecido.toStringAsFixed(2)}',
@@ -125,7 +124,9 @@ class DetalheOportunidadeScreen extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: interesseEnviado ? null : () => _confirmarInteresse(context),
+              onPressed: interesseEnviado
+                  ? null
+                  : () => _confirmarInteresse(context),
               icon: const Icon(Icons.favorite_border),
               label: Text(
                 interesseEnviado

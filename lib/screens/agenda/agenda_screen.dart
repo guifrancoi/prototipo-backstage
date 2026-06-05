@@ -13,8 +13,11 @@ class AgendaScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Agenda')),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          provider.adicionarData(DateTime.now().add(const Duration(days: 7)));
+        onPressed: () async {
+          await provider.adicionarData(
+            DateTime.now().add(const Duration(days: 7)),
+          );
+          if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Nova data adicionada.')),
           );
@@ -36,8 +39,8 @@ class AgendaScreen extends StatelessWidget {
               ),
               trailing: IconButton(
                 icon: const Icon(Icons.delete),
-                onPressed: () {
-                  provider.removerData(data);
+                onPressed: () async {
+                  await provider.removerData(data);
                 },
               ),
             ),

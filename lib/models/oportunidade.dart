@@ -44,4 +44,42 @@ class Oportunidade {
       interesseEnviado: interesseEnviado ?? this.interesseEnviado,
     );
   }
+
+  factory Oportunidade.fromMap(String id, Map<String, dynamic> map) {
+    return Oportunidade(
+      id: id,
+      titulo: map['titulo'] as String? ?? '',
+      descricao: map['descricao'] as String? ?? '',
+      cidade: map['cidade'] as String? ?? '',
+      generoMusical: map['generoMusical'] as String? ?? '',
+      dataEvento: _dateTimeFromValue(map['dataEvento']),
+      cacheOferecido: (map['cacheOferecido'] as num?)?.toDouble() ?? 0,
+      contratante: map['contratante'] as String? ?? '',
+      interesseEnviado: map['interesseEnviado'] as bool? ?? false,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'titulo': titulo,
+      'descricao': descricao,
+      'cidade': cidade,
+      'generoMusical': generoMusical,
+      'dataEvento': dataEvento,
+      'cacheOferecido': cacheOferecido,
+      'contratante': contratante,
+      'interesseEnviado': interesseEnviado,
+    };
+  }
+}
+
+DateTime _dateTimeFromValue(dynamic value) {
+  if (value is DateTime) return value;
+  if (value is String) return DateTime.tryParse(value) ?? DateTime.now();
+
+  try {
+    return value.toDate() as DateTime;
+  } catch (_) {
+    return DateTime.now();
+  }
 }

@@ -48,7 +48,9 @@ class _LoginScreenState extends State<LoginScreen> {
         context: context,
         builder: (_) => AlertDialog(
           title: const Text('Erro'),
-          content: const Text('E-mail ou senha inválidos.'),
+          content: Text(
+            authProvider.errorMessage ?? 'E-mail ou senha inválidos.',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),

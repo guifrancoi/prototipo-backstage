@@ -33,17 +33,16 @@ class OportunidadeCard extends StatelessWidget {
           children: [
             Text(
               oportunidade.titulo,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text('Contratante: ${oportunidade.contratante}'),
             Text('Cidade: ${oportunidade.cidade}'),
             Text('Gênero: ${oportunidade.generoMusical}'),
             Text('Data: $dataFormatada'),
-            Text('Cachê: R\$ ${oportunidade.cacheOferecido.toStringAsFixed(2)}'),
+            Text(
+              'Cachê: R\$ ${oportunidade.cacheOferecido.toStringAsFixed(2)}',
+            ),
             const SizedBox(height: 8),
             Text(
               oportunidade.descricao,
@@ -64,9 +63,7 @@ class OportunidadeCard extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: interesseEnviado ? null : onDemonstrarInteresse,
                     child: Text(
-                      interesseEnviado
-                          ? 'Interesse enviado'
-                          : 'Interessar-se',
+                      interesseEnviado ? 'Interesse enviado' : 'Interessar-se',
                     ),
                   ),
                 ),

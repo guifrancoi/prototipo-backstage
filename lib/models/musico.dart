@@ -48,4 +48,35 @@ class Musico {
       interesseEnviado: interesseEnviado ?? this.interesseEnviado,
     );
   }
+
+  factory Musico.fromMap(String id, Map<String, dynamic> map) {
+    return Musico(
+      id: id,
+      nomeArtistico: map['nomeArtistico'] as String? ?? '',
+      generoMusical: map['generoMusical'] as String? ?? '',
+      cidade: map['cidade'] as String? ?? '',
+      descricao: map['descricao'] as String? ?? '',
+      cacheMedio: (map['cacheMedio'] as num?)?.toDouble() ?? 0,
+      portfolioLinks: List<String>.from(map['portfolioLinks'] as List? ?? []),
+      datasDisponiveis: List<String>.from(
+        map['datasDisponiveis'] as List? ?? [],
+      ),
+      fotoPath: map['fotoPath'] as String?,
+      interesseEnviado: map['interesseEnviado'] as bool? ?? false,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'nomeArtistico': nomeArtistico,
+      'generoMusical': generoMusical,
+      'cidade': cidade,
+      'descricao': descricao,
+      'cacheMedio': cacheMedio,
+      'portfolioLinks': portfolioLinks,
+      'datasDisponiveis': datasDisponiveis,
+      'fotoPath': fotoPath,
+      'interesseEnviado': interesseEnviado,
+    };
+  }
 }

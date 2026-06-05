@@ -16,8 +16,9 @@ class HomeScreen extends StatelessWidget {
         title: const Text('Backstage'),
         actions: [
           IconButton(
-            onPressed: () {
-              authProvider.logout();
+            onPressed: () async {
+              await authProvider.logout();
+              if (!context.mounted) return;
               Navigator.pushReplacementNamed(context, AppRoutes.login);
             },
             icon: const Icon(Icons.logout),
@@ -45,10 +46,8 @@ class HomeScreen extends StatelessWidget {
           _HomeTile(
             title: 'Meus artistas de interesse',
             icon: Icons.star,
-            onTap: () => Navigator.pushNamed(
-              context,
-              AppRoutes.meusArtistasInteresse,
-            ),
+            onTap: () =>
+                Navigator.pushNamed(context, AppRoutes.meusArtistasInteresse),
           ),
           _HomeTile(
             title: 'Lista de oportunidades',
