@@ -51,6 +51,8 @@ class OportunidadeProvider extends ChangeNotifier {
 
   String? _generoSelecionadoMusicos;
   String? _cidadeFiltroMusicos;
+  String _termoPesquisa = '';
+  String _tipoOrdenacao = 'nome_asc';
 
   List<Musico> get musicos => _musicos;
   List<Oportunidade> get oportunidades => _oportunidades;
@@ -59,6 +61,8 @@ class OportunidadeProvider extends ChangeNotifier {
 
   String? get generoSelecionadoMusicos => _generoSelecionadoMusicos;
   String? get cidadeFiltroMusicos => _cidadeFiltroMusicos;
+  String get termoPesquisa => _termoPesquisa;
+  String get tipoOrdenacao => _tipoOrdenacao;
 
   List<Oportunidade> get oportunidadesComInteresse =>
       _oportunidades.where((o) => o.interesseEnviado).toList();
@@ -93,6 +97,20 @@ class OportunidadeProvider extends ChangeNotifier {
   void resetarFiltroMusicos() {
     _generoSelecionadoMusicos = null;
     _cidadeFiltroMusicos = null;
+    _termoPesquisa = '';
+    _tipoOrdenacao = 'nome_asc';
+    _aplicarFiltrosAtuais();
+    notifyListeners();
+  }
+
+  void pesquisarMusicos(String termo) {
+    _termoPesquisa = termo;
+    _aplicarFiltrosAtuais();
+    notifyListeners();
+  }
+
+  void ordenarMusicos(String tipo) {
+    _tipoOrdenacao = tipo;
     _aplicarFiltrosAtuais();
     notifyListeners();
   }
@@ -253,10 +271,36 @@ class OportunidadeProvider extends ChangeNotifier {
           cidade.isEmpty ||
           m.cidade.toLowerCase().contains(cidade.toLowerCase());
 
-      return generoValido && cidadeValida;
+      final pesquisaValida = _termoPesquisa.isEmpty ||
+          m.nomeArtistico.toLowerCase().contains(_termoPesquisa.toLowerCase()) ||
+          m.descricao.toLowerCase().contains(_termoPesquisa.toLowerCase());
+
+      return generoValido && cidadeValida && pesquisaValida;
     }).toList();
 
+    // Aplicar ordenação
+    _aplicarOrdenacao();
+
     _oportunidades = [..._todasOportunidades];
+  }
+
+  void _aplicarOrdenacao() {
+    switch (_tipoOrdenacao) {
+      case 'nome_asc':
+        _musicos.sort((a, b) =>
+            a.nomeArtistico.toLowerCase().compareTo(b.nomeArtistico.toLowerCase()));
+        break;
+      case 'nome_desc':
+        _musicos.sort((a, b) =>
+            b.nomeArtistico.toLowerCase().compareTo(a.nomeArtistico.toLowerCase()));
+        break;
+      case 'cache_maior':
+        _musicos.sort((a, b) => b.cacheMedio.compareTo(a.cacheMedio));
+        break;
+      case 'cache_menor':
+        _musicos.sort((a, b) => a.cacheMedio.compareTo(b.cacheMedio));
+        break;
+    }
   }
 
   void _marcarMusico(String musicoId, {required bool interesseEnviado}) {
