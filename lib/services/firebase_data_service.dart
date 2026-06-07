@@ -132,6 +132,20 @@ class FirebaseDataService {
         .toList();
   }
 
+  Stream<List<Musico>> streamMusicos() {
+    if (!isEnabled) return Stream.value([...MockData.musicos]);
+    return firestore.collection('musicos').snapshots().map(
+      (s) => s.docs.map((d) => Musico.fromMap(d.id, d.data())).toList(),
+    );
+  }
+
+  Stream<List<Oportunidade>> streamOportunidades() {
+    if (!isEnabled) return Stream.value([...MockData.oportunidades]);
+    return firestore.collection('oportunidades').snapshots().map(
+      (s) => s.docs.map((d) => Oportunidade.fromMap(d.id, d.data())).toList(),
+    );
+  }
+
   Future<List<Interesse>> listarInteresses(String usuarioId) async {
     final snapshot = await firestore
         .collection('interesses_oportunidades')

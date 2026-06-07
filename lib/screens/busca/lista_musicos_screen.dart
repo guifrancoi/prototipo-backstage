@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../models/musico.dart';
 import '../../providers/oportunidade_provider.dart';
 import '../../routes/app_routes.dart';
 import '../../widgets/musico_card.dart';
@@ -52,8 +53,28 @@ class ListaMusicosScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Lista de músicos')),
-      body: provider.musicos.isEmpty
-          ? const Center(
+      body: StreamBuilder<List<Musico>>(
+        stream: provider.musicosStream,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              provider.musicos.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(24),
+                child: Text(
+                  'Erro ao carregar músicos. Verifique sua conexão.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+            );
+          }
+          final musicos = provider.musicos;
+          if (musicos.isEmpty) {
+            return const Center(
               child: Padding(
                 padding: EdgeInsets.all(24),
                 child: Text(
@@ -62,27 +83,29 @@ class ListaMusicosScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 16),
                 ),
               ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: provider.musicos.length,
-              itemBuilder: (context, index) {
-                final musico = provider.musicos[index];
-
-                return MusicoCard(
-                  musico: musico,
-                  onDemonstrarInteresse: () =>
-                      _confirmarInteresse(context, musicoId: musico.id),
-                  onVerDetalhes: () {
-                    Navigator.pushNamed(
-                      context,
-                      AppRoutes.detalheMusico,
-                      arguments: musico.id,
-                    );
-                  },
-                );
-              },
-            ),
+            );
+          }
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: musicos.length,
+            itemBuilder: (context, index) {
+              final musico = musicos[index];
+              return MusicoCard(
+                musico: musico,
+                onDemonstrarInteresse: () =>
+                    _confirmarInteresse(context, musicoId: musico.id),
+                onVerDetalhes: () {
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.detalheMusico,
+                    arguments: musico.id,
+                  );
+                },
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

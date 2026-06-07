@@ -12,14 +12,34 @@ import '../services/firebase_data_service.dart';
 class OportunidadeProvider extends ChangeNotifier {
   OportunidadeProvider({FirebaseDataService? service})
     : _service = service ?? FirebaseDataService() {
+    musicosStream = _service.streamMusicos();
+    oportunidadesStream = _service.streamOportunidades();
+
     if (_service.isEnabled) {
-      _authSubscription = _service.authUserIds.listen((_) => carregarDados());
-      carregarDados();
+      _musicosSubscription = _service.streamMusicos().listen((lista) {
+        _todosMusicos = lista;
+        _aplicarStatusInteresses();
+        _aplicarFiltrosAtuais();
+        notifyListeners();
+      });
+      _oportunidadesSubscription = _service.streamOportunidades().listen((lista) {
+        _todasOportunidades = lista;
+        _aplicarStatusInteresses();
+        _aplicarFiltrosAtuais();
+        notifyListeners();
+      });
+      _authSubscription = _service.authUserIds.listen((_) => _carregarInteresses());
+      _service.seedDadosIniciais().then((_) => _carregarInteresses());
     }
   }
 
   final FirebaseDataService _service;
   StreamSubscription<String?>? _authSubscription;
+  StreamSubscription<List<Musico>>? _musicosSubscription;
+  StreamSubscription<List<Oportunidade>>? _oportunidadesSubscription;
+
+  late final Stream<List<Musico>> musicosStream;
+  late final Stream<List<Oportunidade>> oportunidadesStream;
 
   List<Musico> _todosMusicos = [...MockData.musicos];
   List<Oportunidade> _todasOportunidades = [...MockData.oportunidades];
@@ -29,7 +49,6 @@ class OportunidadeProvider extends ChangeNotifier {
   List<Interesse> _interesses = [];
   List<InteresseMusico> _interessesMusicos = [];
 
-  bool _isLoading = false;
   String? _generoSelecionadoMusicos;
   String? _cidadeFiltroMusicos;
 
@@ -37,7 +56,6 @@ class OportunidadeProvider extends ChangeNotifier {
   List<Oportunidade> get oportunidades => _oportunidades;
   List<Interesse> get interesses => _interesses;
   List<InteresseMusico> get interessesMusicos => _interessesMusicos;
-  bool get isLoading => _isLoading;
 
   String? get generoSelecionadoMusicos => _generoSelecionadoMusicos;
   String? get cidadeFiltroMusicos => _cidadeFiltroMusicos;
@@ -48,43 +66,21 @@ class OportunidadeProvider extends ChangeNotifier {
   List<Musico> get musicosComInteresse =>
       _musicos.where((m) => m.interesseEnviado).toList();
 
-  Future<void> carregarDados() async {
-    if (!_service.isEnabled) return;
-
-    _isLoading = true;
-    notifyListeners();
+  Future<void> _carregarInteresses() async {
+    final usuarioId = _service.currentUserId;
+    if (usuarioId == null) return;
 
     try {
-      await _service.seedDadosIniciais();
-
-      final usuarioId = _service.currentUserId;
       final results = await Future.wait([
-        _service.listarMusicos(),
-        _service.listarOportunidades(),
-        if (usuarioId != null) _service.listarInteresses(usuarioId),
-        if (usuarioId != null) _service.listarInteressesMusicos(usuarioId),
+        _service.listarInteresses(usuarioId),
+        _service.listarInteressesMusicos(usuarioId),
       ]);
-
-      _todosMusicos = results[0] as List<Musico>;
-      _todasOportunidades = results[1] as List<Oportunidade>;
-      _interesses = usuarioId == null ? [] : results[2] as List<Interesse>;
-      _interessesMusicos = usuarioId == null
-          ? []
-          : results[3] as List<InteresseMusico>;
-
+      _interesses = results[0] as List<Interesse>;
+      _interessesMusicos = results[1] as List<InteresseMusico>;
       _aplicarStatusInteresses();
       _aplicarFiltrosAtuais();
-    } catch (_) {
-      _todosMusicos = [...MockData.musicos];
-      _todasOportunidades = [...MockData.oportunidades];
-      _interesses = [];
-      _interessesMusicos = [];
-      _aplicarStatusInteresses();
-      _aplicarFiltrosAtuais();
-    } finally {
-      _isLoading = false;
       notifyListeners();
-    }
+    } catch (_) {}
   }
 
   void filtrarMusicos({String? genero, String? cidade}) {
@@ -295,6 +291,8 @@ class OportunidadeProvider extends ChangeNotifier {
   @override
   void dispose() {
     _authSubscription?.cancel();
+    _musicosSubscription?.cancel();
+    _oportunidadesSubscription?.cancel();
     super.dispose();
   }
 }
