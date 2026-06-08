@@ -45,7 +45,8 @@ class MyApp extends StatelessWidget {
         AppRoutes.conversas: (_) => const ConversasScreen(),
         AppRoutes.sobre: (_) => const SobreScreen(),
         AppRoutes.meusInteresses: (_) => const MeusInteressesScreen(),
-        AppRoutes.meusArtistasInteresse: (_) => const MeusArtistasInteresseScreen(),
+        AppRoutes.meusArtistasInteresse: (_) =>
+            const MeusArtistasInteresseScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == AppRoutes.chat) {
@@ -65,12 +66,11 @@ class MyApp extends StatelessWidget {
         if (settings.name == AppRoutes.detalheOportunidade) {
           final oportunidadeId = settings.arguments as String;
           return MaterialPageRoute(
-            builder: (_) => DetalheOportunidadeScreen(
-              oportunidadeId: oportunidadeId,
-            ),
+            builder: (_) =>
+                DetalheOportunidadeScreen(oportunidadeId: oportunidadeId),
           );
         }
-        
+
         return null;
       },
     );

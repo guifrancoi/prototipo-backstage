@@ -26,9 +26,7 @@ class MusicoCard extends StatelessWidget {
           children: [
             ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: const CircleAvatar(
-                child: Icon(Icons.music_note),
-              ),
+              leading: const CircleAvatar(child: Icon(Icons.music_note)),
               title: Text(musico.nomeArtistico),
               subtitle: Text('${musico.generoMusical} • ${musico.cidade}'),
               trailing: Text('R\$ ${musico.cacheMedio.toStringAsFixed(0)}'),
@@ -53,9 +51,7 @@ class MusicoCard extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: interesseEnviado ? null : onDemonstrarInteresse,
                     child: Text(
-                      interesseEnviado
-                          ? 'Interesse enviado'
-                          : 'Interessar-se',
+                      interesseEnviado ? 'Interesse enviado' : 'Interessar-se',
                     ),
                   ),
                 ),

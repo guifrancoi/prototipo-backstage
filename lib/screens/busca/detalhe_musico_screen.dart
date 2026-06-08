@@ -1,18 +1,14 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/utils/local_image_provider.dart';
 import '../../providers/oportunidade_provider.dart';
 
 class DetalheMusicoScreen extends StatelessWidget {
   final String musicoId;
 
-  const DetalheMusicoScreen({
-    super.key,
-    required this.musicoId,
-  });
+  const DetalheMusicoScreen({super.key, required this.musicoId});
 
   Future<void> _abrirLink(BuildContext context, String link) async {
     String url = link.trim();
@@ -23,9 +19,9 @@ class DetalheMusicoScreen extends StatelessWidget {
 
     final uri = Uri.tryParse(url);
     if (uri == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Link inválido.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Link inválido.')));
       return;
     }
 
@@ -46,7 +42,9 @@ class DetalheMusicoScreen extends StatelessWidget {
 
     if (musico.interesseEnviado == true) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Você já demonstrou interesse neste artista.')),
+        const SnackBar(
+          content: Text('Você já demonstrou interesse neste artista.'),
+        ),
       );
       return;
     }
@@ -73,13 +71,17 @@ class DetalheMusicoScreen extends StatelessWidget {
 
     if (confirmar != true || !context.mounted) return;
 
-    provider.demonstrarInteresseEmMusico(
+    await provider.demonstrarInteresseEmMusico(
       musicoId: musicoId,
       usuarioId: 'casa_show_logada_1',
     );
 
+    if (!context.mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Interesse no artista enviado com sucesso!')),
+      const SnackBar(
+        content: Text('Interesse no artista enviado com sucesso!'),
+      ),
     );
   }
 
@@ -91,13 +93,12 @@ class DetalheMusicoScreen extends StatelessWidget {
     if (musico == null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Detalhes do músico')),
-        body: const Center(
-          child: Text('Músico não encontrado.'),
-        ),
+        body: const Center(child: Text('Músico não encontrado.')),
       );
     }
 
-    final temFoto = musico.fotoPath != null && musico.fotoPath!.isNotEmpty;
+    final imageProvider = localImageProvider(musico.fotoPath);
+    final temFoto = imageProvider != null;
     final interesseEnviado = musico.interesseEnviado == true;
 
     return Scaffold(
@@ -109,8 +110,7 @@ class DetalheMusicoScreen extends StatelessWidget {
             child: CircleAvatar(
               radius: 55,
               backgroundColor: Colors.deepPurple.shade100,
-              backgroundImage:
-                  temFoto ? FileImage(File(musico.fotoPath!)) : null,
+              backgroundImage: imageProvider,
               child: !temFoto
                   ? const Icon(
                       Icons.music_note,
@@ -124,10 +124,7 @@ class DetalheMusicoScreen extends StatelessWidget {
           Center(
             child: Text(
               musico.nomeArtistico,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(height: 24),
@@ -141,7 +138,9 @@ class DetalheMusicoScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text('Cidade: ${musico.cidade}'),
                   const SizedBox(height: 8),
-                  Text('Cachê médio: R\$ ${musico.cacheMedio.toStringAsFixed(2)}'),
+                  Text(
+                    'Cachê médio: R\$ ${musico.cacheMedio.toStringAsFixed(2)}',
+                  ),
                   const SizedBox(height: 16),
                   const Text(
                     'Descrição',
@@ -196,7 +195,9 @@ class DetalheMusicoScreen extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: interesseEnviado ? null : () => _confirmarInteresse(context),
+              onPressed: interesseEnviado
+                  ? null
+                  : () => _confirmarInteresse(context),
               icon: const Icon(Icons.favorite_border),
               label: Text(
                 interesseEnviado

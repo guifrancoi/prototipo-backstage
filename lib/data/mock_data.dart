@@ -39,6 +39,10 @@ class MockData {
       dataEvento: DateTime(2026, 3, 21),
       cacheOferecido: 900,
       contratante: 'Bar Central',
+      logradouro: 'Rua Barão do Amazonas',
+      numero: '520',
+      estado: 'SP',
+      cep: '14010-120',
       interesseEnviado: false,
     ),
     Oportunidade(
@@ -50,6 +54,10 @@ class MockData {
       dataEvento: DateTime(2026, 3, 27),
       cacheOferecido: 1500,
       contratante: 'Pub Groove',
+      logradouro: 'Avenida Getúlio Vargas',
+      numero: '1100',
+      estado: 'SP',
+      cep: '14174-000',
       interesseEnviado: false,
     ),
   ];

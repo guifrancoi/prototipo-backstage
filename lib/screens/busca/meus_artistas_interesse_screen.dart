@@ -33,7 +33,11 @@ class MeusArtistasInteresseScreen extends StatelessWidget {
 
     if (confirmar != true || !context.mounted) return;
 
-    context.read<OportunidadeProvider>().removerInteresseEmMusico(musicoId);
+    await context.read<OportunidadeProvider>().removerInteresseEmMusico(
+      musicoId,
+    );
+
+    if (!context.mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -48,9 +52,7 @@ class MeusArtistasInteresseScreen extends StatelessWidget {
     final artistas = provider.musicosComInteresse;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Meus artistas de interesse'),
-      ),
+      appBar: AppBar(title: const Text('Meus artistas de interesse')),
       body: artistas.isEmpty
           ? const Center(
               child: Padding(

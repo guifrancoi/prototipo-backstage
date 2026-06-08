@@ -33,12 +33,12 @@ class MeusInteressesScreen extends StatelessWidget {
 
     if (confirmar != true || !context.mounted) return;
 
-    context.read<OportunidadeProvider>().removerInteresse(oportunidadeId);
+    await context.read<OportunidadeProvider>().removerInteresse(oportunidadeId);
+
+    if (!context.mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Interesse removido com sucesso.'),
-      ),
+      const SnackBar(content: Text('Interesse removido com sucesso.')),
     );
   }
 
@@ -54,9 +54,7 @@ class MeusInteressesScreen extends StatelessWidget {
     final interesses = provider.oportunidadesComInteresse;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Meus interesses'),
-      ),
+      appBar: AppBar(title: const Text('Meus interesses')),
       body: interesses.isEmpty
           ? const Center(
               child: Padding(

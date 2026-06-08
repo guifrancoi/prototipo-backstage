@@ -27,22 +27,24 @@ class _RecuperarSenhaScreenState extends State<RecuperarSenhaScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final provider = context.read<AuthProvider>();
-    await provider.recuperarSenha(_emailController.text.trim());
+    final sucesso = await provider.recuperarSenha(_emailController.text.trim());
 
     if (!mounted) return;
 
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Recuperação de senha'),
-        content: const Text(
-          'Se o e-mail estiver cadastrado, as instruções serão enviadas.',
+        title: Text(sucesso ? 'Recuperacao de senha' : 'Erro'),
+        content: Text(
+          sucesso
+              ? 'Se o e-mail estiver cadastrado, as instrucoes serao enviadas.'
+              : provider.errorMessage ?? 'Nao foi possivel enviar o e-mail.',
         ),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              Navigator.pop(context);
+              if (sucesso) Navigator.pop(context);
             },
             child: const Text('OK'),
           ),

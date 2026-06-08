@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/constants/app_strings.dart';
+import '../../core/utils/local_image_provider.dart';
 import '../../models/musico.dart';
 import '../../providers/perfil_provider.dart';
 
@@ -34,9 +33,9 @@ class _PerfilScreenState extends State<PerfilScreen> {
   void initState() {
     super.initState();
 
-    Future.microtask(() {
-      final provider = context.read<PerfilProvider>();
+    final provider = context.read<PerfilProvider>();
 
+    Future.microtask(() {
       if (provider.perfilMusico == null) {
         provider.carregarPerfilMock();
       }
@@ -106,9 +105,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Imagem selecionada com sucesso!'),
-      ),
+      const SnackBar(content: Text('Imagem selecionada com sucesso!')),
     );
   }
 
@@ -121,9 +118,9 @@ class _PerfilScreenState extends State<PerfilScreen> {
 
     final uri = Uri.tryParse(url);
     if (uri == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Link inválido.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Link inválido.')));
       return;
     }
 
@@ -160,7 +157,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
     return null;
   }
 
-  void _salvarPerfil() {
+  Future<void> _salvarPerfil() async {
     if (!_formKey.currentState!.validate()) return;
 
     if (_generoSelecionado == null || _generoSelecionado!.isEmpty) {
@@ -182,7 +179,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
       _cacheController.text.trim().replaceAll(',', '.'),
     );
 
-    provider.atualizarPerfil(
+    await provider.atualizarPerfil(
       nomeArtistico: _nomeArtisticoController.text.trim(),
       generoMusical: _generoSelecionado!,
       cidade: _cidadeController.text.trim(),
@@ -192,14 +189,14 @@ class _PerfilScreenState extends State<PerfilScreen> {
       fotoPath: _fotoSelecionadaPath,
     );
 
+    if (!mounted) return;
+
     setState(() {
       _modoEdicao = false;
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Perfil atualizado com sucesso!'),
-      ),
+      const SnackBar(content: Text('Perfil atualizado com sucesso!')),
     );
   }
 
@@ -214,21 +211,17 @@ class _PerfilScreenState extends State<PerfilScreen> {
   }
 
   Widget _buildFotoPerfil() {
-    final hasImage =
-        _fotoSelecionadaPath != null && _fotoSelecionadaPath!.isNotEmpty;
+    final imageProvider = localImageProvider(_fotoSelecionadaPath);
+    final hasImage = imageProvider != null;
 
     return Column(
       children: [
         CircleAvatar(
           radius: 55,
           backgroundColor: Colors.deepPurple.shade100,
-          backgroundImage: hasImage ? FileImage(File(_fotoSelecionadaPath!)) : null,
+          backgroundImage: imageProvider,
           child: !hasImage
-              ? const Icon(
-                  Icons.person,
-                  size: 55,
-                  color: Colors.deepPurple,
-                )
+              ? const Icon(Icons.person, size: 55, color: Colors.deepPurple)
               : null,
         ),
         const SizedBox(height: 12),
@@ -251,10 +244,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
         Center(
           child: Text(
             perfil.nomeArtistico,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         ),
         const SizedBox(height: 24),
@@ -268,7 +258,9 @@ class _PerfilScreenState extends State<PerfilScreen> {
                 const SizedBox(height: 8),
                 Text('Cidade: ${perfil.cidade}'),
                 const SizedBox(height: 8),
-                Text('Cachê médio: R\$ ${perfil.cacheMedio.toStringAsFixed(2)}'),
+                Text(
+                  'Cachê médio: R\$ ${perfil.cacheMedio.toStringAsFixed(2)}',
+                ),
                 const SizedBox(height: 16),
                 Text('Descrição: ${perfil.descricao}'),
                 const SizedBox(height: 16),
@@ -344,10 +336,8 @@ class _PerfilScreenState extends State<PerfilScreen> {
               ),
               items: AppStrings.generosMusicais
                   .map(
-                    (genero) => DropdownMenuItem(
-                      value: genero,
-                      child: Text(genero),
-                    ),
+                    (genero) =>
+                        DropdownMenuItem(value: genero, child: Text(genero)),
                   )
                   .toList(),
               onChanged: (value) {
@@ -355,8 +345,9 @@ class _PerfilScreenState extends State<PerfilScreen> {
                   _generoSelecionado = value;
                 });
               },
-              validator: (value) =>
-                  value == null || value.isEmpty ? 'Selecione um gênero musical.' : null,
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Selecione um gênero musical.'
+                  : null,
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -365,13 +356,14 @@ class _PerfilScreenState extends State<PerfilScreen> {
                 labelText: 'Cidade',
                 border: OutlineInputBorder(),
               ),
-              validator: (value) =>
-                  _validarCampoObrigatorio(value, 'a cidade'),
+              validator: (value) => _validarCampoObrigatorio(value, 'a cidade'),
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _cacheController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               decoration: const InputDecoration(
                 labelText: 'Cachê médio',
                 hintText: 'Ex: 1500.00',
@@ -440,14 +432,12 @@ class _PerfilScreenState extends State<PerfilScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Perfil do artista'),
-      ),
+      appBar: AppBar(title: const Text('Perfil do artista')),
       body: perfil == null
           ? const Center(child: CircularProgressIndicator())
           : _modoEdicao
-              ? _buildEdicao(perfil)
-              : _buildVisualizacao(perfil),
+          ? _buildEdicao(perfil)
+          : _buildVisualizacao(perfil),
     );
   }
 }
