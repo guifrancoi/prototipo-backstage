@@ -8,6 +8,10 @@ class Oportunidade {
   final double cacheOferecido;
   final String contratante;
   final bool interesseEnviado;
+  final String logradouro;
+  final String numero;
+  final String estado;
+  final String? cep;
 
   Oportunidade({
     required this.id,
@@ -18,7 +22,11 @@ class Oportunidade {
     required this.dataEvento,
     required this.cacheOferecido,
     required this.contratante,
+    required this.logradouro,
+    required this.numero,
+    required this.estado,
     bool? interesseEnviado,
+    this.cep,
   }) : interesseEnviado = interesseEnviado ?? false;
 
   Oportunidade copyWith({
@@ -31,6 +39,11 @@ class Oportunidade {
     double? cacheOferecido,
     String? contratante,
     bool? interesseEnviado,
+    String? logradouro,
+    String? numero,
+    String? estado,
+    String? cep,
+    bool clearCep = false,
   }) {
     return Oportunidade(
       id: id ?? this.id,
@@ -42,6 +55,10 @@ class Oportunidade {
       cacheOferecido: cacheOferecido ?? this.cacheOferecido,
       contratante: contratante ?? this.contratante,
       interesseEnviado: interesseEnviado ?? this.interesseEnviado,
+      logradouro: logradouro ?? this.logradouro,
+      numero: numero ?? this.numero,
+      estado: estado ?? this.estado,
+      cep: clearCep ? null : (cep ?? this.cep),
     );
   }
 
@@ -56,6 +73,10 @@ class Oportunidade {
       cacheOferecido: (map['cacheOferecido'] as num?)?.toDouble() ?? 0,
       contratante: map['contratante'] as String? ?? '',
       interesseEnviado: map['interesseEnviado'] as bool? ?? false,
+      logradouro: map['logradouro'] as String? ?? '',
+      numero: map['numero'] as String? ?? '',
+      estado: map['estado'] as String? ?? '',
+      cep: map['cep'] as String?,
     );
   }
 
@@ -69,6 +90,10 @@ class Oportunidade {
       'cacheOferecido': cacheOferecido,
       'contratante': contratante,
       'interesseEnviado': interesseEnviado,
+      'logradouro': logradouro,
+      'numero': numero,
+      'estado': estado,
+      if (cep != null) 'cep': cep,
     };
   }
 }

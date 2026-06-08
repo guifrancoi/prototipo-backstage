@@ -10,6 +10,7 @@ import 'providers/auth_provider.dart';
 import 'providers/chat_provider.dart';
 import 'providers/oportunidade_provider.dart';
 import 'providers/perfil_provider.dart';
+import 'services/location_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +26,10 @@ Future<void> main() async {
           ChangeNotifierProvider(create: (_) => OportunidadeProvider()),
           ChangeNotifierProvider(create: (_) => AgendaProvider()),
           ChangeNotifierProvider(create: (_) => ChatProvider()),
+          Provider<LocationService>(
+            create: (_) => LocationService(),
+            dispose: (_, s) => s.dispose(),
+          ),
         ],
         child: const MyApp(),
       ),
